@@ -1,32 +1,36 @@
 const generatePINs = () => {
-    let library = [];
+    let pinsArray = [];
 
-    while (library.length < 1000) {
-        let pinArray = []
+    while (pinsArray.length < 1000) {
+        let pinComponents = []
         for (i=0; i<4; i++){
-            pinArray.push(Math.floor(Math.random() * 10))
+            pinComponents.push(Math.floor(Math.random() * 10))
         }
-        let pin = pinArray.join('')
-        if (!twoSameDigits(pin) && !threeIncrementalDigits(pin) && !library.find(e=>e===pin)) library.push(pin)
+        let pin = pinComponents.join('')
+        if (!checkContigousEquality(pin) && !checkConsecutiveIncrements(pin) && !pinsArray.find(p=>p===pin)) pinsArray.push(pin)
     }
 
-    return library
+    return pinsArray
 }
 
-const twoSameDigits = (strNum) => {
+const checkContigousEquality = (strNum) => {
     let arrOfNum = strNum.split('')
-    return arrOfNum.filter((e,i,a)=>{return a.indexOf(e)===i}).length !== 4
+    return arrOfNum.filter((n,i,a)=>{return a.indexOf(n)===i}).length !== 4
 }
-const threeIncrementalDigits = (strNum) => {
-    let arrOfNum = strNum.split('').map(e=>parseInt(e))
-    return (arrOfNum[1] === (arrOfNum[0] + 1) &&
-            arrOfNum[2] === (arrOfNum[1] + 1)) ||
-            (arrOfNum[2] === (arrOfNum[1] + 1) &&
-            arrOfNum[3] === (arrOfNum[2] + 1))
+const checkConsecutiveIncrements = (st) => {
+    let group = []
+    return st.split('').some((n, index) => {
+        const number = parseInt(n)
+        const isIncrement = (group[group.length - 1] + 1) === number
+        if (isIncrement) group.push(number)
+        if (group.length >= 3) return true
+        if (!isIncrement) group = [number]
+        return false
+    })
 }
 
 module.exports = {
     generatePINs: generatePINs,
-    twoSameDigits: twoSameDigits,
-    threeIncrementalDigits: threeIncrementalDigits
+    checkContigousEquality: checkContigousEquality,
+    checkConsecutiveIncrements: checkConsecutiveIncrements
 }
